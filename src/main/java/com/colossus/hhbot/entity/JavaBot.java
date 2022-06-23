@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Optional;
 
 public class JavaBot {
 
@@ -32,7 +33,6 @@ public class JavaBot {
                 try{
                     //send request and get response, print in console what we got
                     HttpResponse<String> response = client.send(request,HttpResponse.BodyHandlers.ofString());
-                    System.out.println(response.body());
 
                     //json response body to Job class mapping
                     ObjectMapper mapper = new ObjectMapper();
@@ -42,8 +42,16 @@ public class JavaBot {
                     System.out.println(body);
                     GetFromHH hh = mapper.readValue(body, GetFromHH.class);
                     hh.items.forEach(job -> {
-                        System.out.println(job.getVacancy() + "    " + job.getExperience() + "    " + job.getSalary());
-                        bot.execute(new SendMessage(it.message().chat().id(), job.getVacancy() + "    " + job.getExperience() + "    " + job.getSalary()));
+                        int from,to;
+                        if (job.getSalary() == null){
+                            from = 0;
+                            to = 0;
+                        }else {
+                            from = job.getSalary().getFrom();
+                            to = job.getSalary().getTo();
+                        }
+                        bot.execute(new SendMessage(it.message().chat().id(), job.getName() + " | " + job.getEmployer().getName()+ " : " + from + " - " + to));// + "    " + job.getExperience() + "    " + job.getSalary()));
+                        response.body();
                     });
 
                 } catch (Exception e){
