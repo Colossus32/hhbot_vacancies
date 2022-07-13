@@ -9,5 +9,5 @@ import java.util.List;
 public class GetFromHH {
     //items from api response
     @JsonProperty("items")
-    List<Job> items;
+    private List<Job> items;
 }
